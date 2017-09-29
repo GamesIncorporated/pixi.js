@@ -619,7 +619,10 @@ export default class BaseTexture extends EventEmitter
 
             if (!navigator.isCocoonJS)
             {
-                this.source.src = '';
+                /* commented this line because it assumes that when we destroy
+                 * the base texture we also want to discard of the original image
+                 */
+                //this.source.src = '';
             }
         }
 

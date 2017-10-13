@@ -452,11 +452,6 @@ export default class SpriteRenderer extends ObjectRenderer
             this.renderer.state.setBlendMode(group.blend);
 
             gl.drawElements(gl.TRIANGLES, group.size * 6, gl.UNSIGNED_SHORT, group.start * 6 * 2);
-            
-            for (let j = 0; j < groupTextureCount; j++) 
-            {
-                this.renderer.unbindTexture(group.textures[j]);
-            }
         }
 
         // reset elements for the next flush

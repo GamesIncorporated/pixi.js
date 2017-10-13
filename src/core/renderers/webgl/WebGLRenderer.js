@@ -239,7 +239,7 @@ export default class WebGLRenderer extends SystemRenderer
         this._activeVao = null;
 
         this.boundTextures = new Array(maxTextures);
-        this.emptyTextures = new Array(maxTextures);
+        //this.emptyTextures = new Array(maxTextures);
 
         // create a texture manager...
         this.textureManager = new TextureManager(this);
@@ -254,7 +254,7 @@ export default class WebGLRenderer extends SystemRenderer
         this.bindRenderTarget(this.rootRenderTarget);
 
         // now lets fill up the textures with empty ones!
-        const emptyGLTexture = new glCore.GLTexture.fromData(gl, null, 1, 1);
+        //const emptyGLTexture = new glCore.GLTexture.fromData(gl, null, 1, 1);
 
         const tempObj = { _glTextures: {} };
 
@@ -262,13 +262,13 @@ export default class WebGLRenderer extends SystemRenderer
 
         for (let i = 0; i < maxTextures; i++)
         {
-            const empty = new BaseTexture();
+            //const empty = new BaseTexture();
 
-            empty._glTextures[this.CONTEXT_UID] = emptyGLTexture;
+            //empty._glTextures[this.CONTEXT_UID] = emptyGLTexture;
 
             this.boundTextures[i] = tempObj;
-            this.emptyTextures[i] = empty;
-            this.bindTexture(null, i);
+            //this.emptyTextures[i] = empty;
+            //this.bindTexture(null, i);
         }
 
         this.emit('context', gl);
@@ -542,7 +542,7 @@ export default class WebGLRenderer extends SystemRenderer
      */
     bindTexture(texture, location, forceLocation)
     {
-        texture = texture || this.emptyTextures[location];
+        //texture = texture || this.emptyTextures[location];
         texture = texture.baseTexture || texture;
         texture.touched = this.textureGC.count;
 
@@ -597,6 +597,10 @@ export default class WebGLRenderer extends SystemRenderer
     unbindTexture(texture)
     {
         const gl = this.gl;
+        
+        const tempObj = { _glTextures: {} };
+
+        tempObj._glTextures[this.CONTEXT_UID] = {};
 
         texture = texture.baseTexture || texture;
 
@@ -604,10 +608,11 @@ export default class WebGLRenderer extends SystemRenderer
         {
             if (this.boundTextures[i] === texture)
             {
-                this.boundTextures[i] = this.emptyTextures[i];
+                this.boundTextures[i] = tempObj;
 
                 gl.activeTexture(gl.TEXTURE0 + i);
-                gl.bindTexture(gl.TEXTURE_2D, this.emptyTextures[i]._glTextures[this.CONTEXT_UID].texture);
+                //gl.bindTexture(gl.TEXTURE_2D, this.emptyTextures[i]._glTextures[this.CONTEXT_UID].texture);
+                gl.bindTexture(gl.TEXTURE_2D, null);
             }
         }
 

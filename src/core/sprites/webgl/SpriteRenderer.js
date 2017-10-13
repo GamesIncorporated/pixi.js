@@ -295,6 +295,10 @@ export default class SpriteRenderer extends ObjectRenderer
                             const tIndex = (j + TEXTURE_TICK) % MAX_TEXTURES;
 
                             const t = boundTextures[tIndex];
+                            
+                            if(t === null) {
+                                continue;
+                            }
 
                             if (t._enabled !== TICK)
                             {
@@ -452,6 +456,11 @@ export default class SpriteRenderer extends ObjectRenderer
             this.renderer.state.setBlendMode(group.blend);
 
             gl.drawElements(gl.TRIANGLES, group.size * 6, gl.UNSIGNED_SHORT, group.start * 6 * 2);
+            
+            for (let j = 0; j < groupTextureCount; j++) 
+            {
+                this.renderer.unbindTexture(group.textures[j]);
+            }
         }
 
         // reset elements for the next flush

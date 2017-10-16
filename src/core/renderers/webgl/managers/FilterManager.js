@@ -564,7 +564,11 @@ export default class FilterManager extends WebGLManager
             renderTarget = new RenderTarget(gl, minWidth, minHeight, null, 1);
 
             // set the current one back
-            gl.bindTexture(gl.TEXTURE_2D, tex._glTextures[this.renderer.CONTEXT_UID].texture);
+            if(tex._glTextures.length > 0) {
+                gl.bindTexture(gl.TEXTURE_2D, tex._glTextures[this.renderer.CONTEXT_UID].texture);
+            } else {
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            }
         }
 
         // manually tweak the resolution...

@@ -264,9 +264,13 @@ export default class FilterManager extends WebGLManager
         // free unit 0 for us, doesn't matter what was there
         // don't try to restore it, because syncUniforms can upload it to another slot
         // and it'll be a problem
-        const tex = this.renderer.emptyTextures[0];
+        //const tex = this.renderer.emptyTextures[0];
+        
+        const tempObj = { _glTextures: {} };
 
-        this.renderer.boundTextures[0] = tex;
+        tempObj._glTextures[this.CONTEXT_UID] = {};
+
+        this.renderer.boundTextures[0] = tempObj;
         // this syncs the PixiJS filters  uniforms with glsl uniforms
         this.syncUniforms(shader, filter);
 
@@ -277,7 +281,7 @@ export default class FilterManager extends WebGLManager
 
         this.quad.vao.draw(this.renderer.gl.TRIANGLES, 6, 0);
 
-        gl.bindTexture(gl.TEXTURE_2D, tex._glTextures[this.renderer.CONTEXT_UID].texture);
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
     /**
@@ -560,7 +564,11 @@ export default class FilterManager extends WebGLManager
             renderTarget = new RenderTarget(gl, minWidth, minHeight, null, 1);
 
             // set the current one back
-            gl.bindTexture(gl.TEXTURE_2D, tex._glTextures[this.renderer.CONTEXT_UID].texture);
+            if(tex._glTextures.length > 0) {
+                gl.bindTexture(gl.TEXTURE_2D, tex._glTextures[this.renderer.CONTEXT_UID].texture);
+            } else {
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            }
         }
 
         // manually tweak the resolution...

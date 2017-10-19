@@ -253,22 +253,13 @@ export default class WebGLRenderer extends SystemRenderer
 
         this.bindRenderTarget(this.rootRenderTarget);
 
-        // now lets fill up the textures with empty ones!
-        //const emptyGLTexture = new glCore.GLTexture.fromData(gl, null, 1, 1);
-
         const tempObj = { _glTextures: {} };
 
         tempObj._glTextures[this.CONTEXT_UID] = {};
 
         for (let i = 0; i < maxTextures; i++)
         {
-            //const empty = new BaseTexture();
-
-            //empty._glTextures[this.CONTEXT_UID] = emptyGLTexture;
-
             this.boundTextures[i] = tempObj;
-            //this.emptyTextures[i] = empty;
-            //this.bindTexture(null, i);
         }
 
         this.emit('context', gl);
@@ -611,7 +602,6 @@ export default class WebGLRenderer extends SystemRenderer
                 this.boundTextures[i] = tempObj;
 
                 gl.activeTexture(gl.TEXTURE0 + i);
-                //gl.bindTexture(gl.TEXTURE_2D, this.emptyTextures[i]._glTextures[this.CONTEXT_UID].texture);
                 gl.bindTexture(gl.TEXTURE_2D, null);
             }
         }

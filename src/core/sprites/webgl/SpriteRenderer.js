@@ -295,10 +295,6 @@ export default class SpriteRenderer extends ObjectRenderer
                             const tIndex = (j + TEXTURE_TICK) % MAX_TEXTURES;
 
                             const t = boundTextures[tIndex];
-                            
-                            if(t === null) {
-                                continue;
-                            }
 
                             if (t._enabled !== TICK)
                             {

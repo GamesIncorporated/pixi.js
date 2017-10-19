@@ -264,8 +264,6 @@ export default class FilterManager extends WebGLManager
         // free unit 0 for us, doesn't matter what was there
         // don't try to restore it, because syncUniforms can upload it to another slot
         // and it'll be a problem
-        //const tex = this.renderer.emptyTextures[0];
-        
         const tempObj = { _glTextures: {} };
 
         tempObj._glTextures[this.CONTEXT_UID] = {};

@@ -239,7 +239,6 @@ export default class WebGLRenderer extends SystemRenderer
         this._activeVao = null;
 
         this.boundTextures = new Array(maxTextures);
-        //this.emptyTextures = new Array(maxTextures);
 
         // create a texture manager...
         this.textureManager = new TextureManager(this);
@@ -322,7 +321,7 @@ export default class WebGLRenderer extends SystemRenderer
         // apply transform..
         this.currentRenderer.flush();
 
-        // this.setObjectRenderer(this.emptyRenderer);
+        this.setObjectRenderer(this.emptyRenderer);
 
         this.textureGC.update();
 

@@ -1,7 +1,8 @@
 {
-  "name": "pixi.js",
+  "name": "pixi",
   "version": "4.5.6",
-  "description": "The HTML5 Creation Engine: Create beautiful digital content with the fastest, most flexible 2D WebGL renderer.",
+  "description":
+    "The HTML5 Creation Engine: Create beautiful digital content with the fastest, most flexible 2D WebGL renderer.",
   "author": "Mat Groves",
   "contributors": [
     "Ivan Popelyshev <ivan.popelyshev@gmail.com>",
@@ -9,7 +10,7 @@
     "Chad Engler <chad@pantherdev.com>",
     "Richard Davey <rdavey@gmail.com>"
   ],
-  "main": "./lib/index.js",
+  "main": "dist/pixi.min.js",
   "homepage": "http://goodboydigital.com/",
   "bugs": "https://github.com/pixijs/pixi.js/issues",
   "license": "MIT",
@@ -20,7 +21,8 @@
   "scripts": {
     "clean": "rimraf dist lib && mkdirp dist && mkdir lib",
     "prestart": "npm run clean",
-    "start": "parallelshell \"npm run watch\" \"npm run watch:lint\" \"npm run watch:lib\"",
+    "start":
+      "parallelshell \"npm run watch\" \"npm run watch:lint\" \"npm run watch:lib\"",
     "watch": "npm run dist -- --watch",
     "watch:lib": "npm run lib -- --watch",
     "watch:lint": "watch \"eslint scripts src test || exit 0\" src",
@@ -35,6 +37,7 @@
     "lintfix": "npm run lint --fix",
     "prebuild": "npm run lint",
     "build": "npm run dist",
+    "build-dist": "npm run dist && npm pack",
     "predist": "rimraf dist/**",
     "dist": "pixify -d dist -n PIXI -o pixi -t babelify",
     "prelib": "rimraf lib/**",
@@ -44,12 +47,12 @@
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
     "publish:major": "npm version major && npm publish",
-    "postversion": "npm run clean && npm run build && npm run lib && npm run unit-test",
+    "postversion":
+      "npm run clean && npm run build && npm run lib && npm run unit-test",
     "postpublish": "git push && git push --tags"
   },
   "files": [
-    "dist/",
-    "lib/",
+    "dist/pixi.min.js",
     "CONTRIBUTING.md",
     "LICENSE",
     "package.json",

@@ -193,3 +193,4 @@ The documentation uses [Jaguar.js](https://github.com/pixijs/jaguarjs-jsdoc) and
 This content is released under the (http://opensource.org/licenses/MIT) MIT License.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-39213431-2/pixi.js/index)](https://github.com/igrigorik/ga-beacon)
+b

@@ -10,13 +10,11 @@ import bitTwiddle from 'bit-twiddle';
  * @ignore
  * @class
  */
-class FilterState
-{
+class FilterState {
     /**
      *
      */
-    constructor()
-    {
+    constructor() {
         this.renderTarget = null;
         this.sourceFrame = new Rectangle();
         this.destinationFrame = new Rectangle();
@@ -31,13 +29,11 @@ class FilterState
  * @memberof PIXI
  * @extends PIXI.WebGLManager
  */
-export default class FilterManager extends WebGLManager
-{
+export default class FilterManager extends WebGLManager {
     /**
      * @param {PIXI.WebGLRenderer} renderer - The renderer this manager works for.
      */
-    constructor(renderer)
-    {
+    constructor(renderer) {
         super(renderer);
 
         this.gl = this.renderer.gl;
@@ -59,14 +55,12 @@ export default class FilterManager extends WebGLManager
      * @param {PIXI.DisplayObject} target - The target of the filter to render.
      * @param {PIXI.Filter[]} filters - The filters to apply.
      */
-    pushFilter(target, filters)
-    {
+    pushFilter(target, filters) {
         const renderer = this.renderer;
 
         let filterData = this.filterData;
 
-        if (!filterData)
-        {
+        if (!filterData) {
             filterData = this.renderer._activeRenderTarget.filterStack;
 
             // add new stack
@@ -86,8 +80,7 @@ export default class FilterManager extends WebGLManager
         // get the current filter state..
         let currentState = filterData.stack[++filterData.index];
 
-        if (!currentState)
-        {
+        if (!currentState) {
             currentState = filterData.stack[filterData.index] = new FilterState();
         }
 
@@ -103,13 +96,10 @@ export default class FilterManager extends WebGLManager
         sourceFrame.width = ((targetBounds.width * resolution) | 0) / resolution;
         sourceFrame.height = ((targetBounds.height * resolution) | 0) / resolution;
 
-        if (filterData.stack[0].renderTarget.transform)
-        { //
+        if (filterData.stack[0].renderTarget.transform) { //
 
             // TODO we should fit the rect around the transform..
-        }
-        else if (filters[0].autoFit)
-        {
+        } else if (filters[0].autoFit) {
             sourceFrame.fit(filterData.stack[0].destinationFrame);
         }
 
@@ -143,8 +133,7 @@ export default class FilterManager extends WebGLManager
      * Pops off the filter and applies it.
      *
      */
-    popFilter()
-    {
+    popFilter() {
         const filterData = this.filterData;
 
         const lastState = filterData.stack[filterData.index - 1];
@@ -154,13 +143,10 @@ export default class FilterManager extends WebGLManager
 
         const filters = currentState.filters;
 
-        if (filters.length === 1)
-        {
+        if (filters.length === 1) {
             filters[0].apply(this, currentState.renderTarget, lastState.renderTarget, false, currentState);
             this.freePotRenderTarget(currentState.renderTarget);
-        }
-        else
-        {
+        } else {
             let flip = currentState.renderTarget;
             let flop = this.getPotRenderTarget(
                 this.renderer.gl,
@@ -176,8 +162,7 @@ export default class FilterManager extends WebGLManager
 
             let i = 0;
 
-            for (i = 0; i < filters.length - 1; ++i)
-            {
+            for (i = 0; i < filters.length - 1; ++i) {
                 filters[i].apply(this, flip, flop, true, currentState);
 
                 const t = flip;
@@ -194,8 +179,7 @@ export default class FilterManager extends WebGLManager
 
         filterData.index--;
 
-        if (filterData.index === 0)
-        {
+        if (filterData.index === 0) {
             this.filterData = null;
         }
     }
@@ -208,29 +192,23 @@ export default class FilterManager extends WebGLManager
      * @param {PIXI.RenderTarget} output - The target to output to.
      * @param {boolean} clear - Should the output be cleared before rendering to it
      */
-    applyFilter(filter, input, output, clear)
-    {
+    applyFilter(filter, input, output, clear) {
         const renderer = this.renderer;
         const gl = renderer.gl;
 
         let shader = filter.glShaders[renderer.CONTEXT_UID];
 
         // cacheing..
-        if (!shader)
-        {
-            if (filter.glShaderKey)
-            {
+        if (!shader) {
+            if (filter.glShaderKey) {
                 shader = this.shaderCache[filter.glShaderKey];
 
-                if (!shader)
-                {
+                if (!shader) {
                     shader = new Shader(this.gl, filter.vertexSrc, filter.fragmentSrc);
 
                     filter.glShaders[renderer.CONTEXT_UID] = this.shaderCache[filter.glShaderKey] = shader;
                 }
-            }
-            else
-            {
+            } else {
                 shader = filter.glShaders[renderer.CONTEXT_UID] = new Shader(this.gl, filter.vertexSrc, filter.fragmentSrc);
             }
 
@@ -246,16 +224,14 @@ export default class FilterManager extends WebGLManager
 
         renderer.bindRenderTarget(output);
 
-        if (clear)
-        {
+        if (clear) {
             gl.disable(gl.SCISSOR_TEST);
-            renderer.clear();// [1, 1, 1, 1]);
+            renderer.clear(); // [1, 1, 1, 1]);
             gl.enable(gl.SCISSOR_TEST);
         }
 
         // in case the render target is being masked using a scissor rect
-        if (output === renderer.maskManager.scissorRenderTarget)
-        {
+        if (output === renderer.maskManager.scissorRenderTarget) {
             renderer.maskManager.pushScissorMask(null, renderer.maskManager.scissorData);
         }
 
@@ -288,8 +264,7 @@ export default class FilterManager extends WebGLManager
      * @param {GLShader} shader - The underlying gl shader.
      * @param {PIXI.Filter} filter - The filter we are synchronizing.
      */
-    syncUniforms(shader, filter)
-    {
+    syncUniforms(shader, filter) {
         const uniformData = filter.uniformData;
         const uniforms = filter.uniforms;
 
@@ -300,8 +275,7 @@ export default class FilterManager extends WebGLManager
         // filterArea and filterClamp that are handled by FilterManager directly
         // they must not appear in uniformData
 
-        if (shader.uniforms.filterArea)
-        {
+        if (shader.uniforms.filterArea) {
             currentState = this.filterData.stack[this.filterData.index];
 
             const filterArea = shader.uniforms.filterArea;
@@ -316,8 +290,7 @@ export default class FilterManager extends WebGLManager
 
         // use this to clamp displaced texture coords so they belong to filterArea
         // see displacementFilter fragment shader for an example
-        if (shader.uniforms.filterClamp)
-        {
+        if (shader.uniforms.filterClamp) {
             currentState = currentState || this.filterData.stack[this.filterData.index];
 
             const filterClamp = shader.uniforms.filterClamp;
@@ -331,18 +304,13 @@ export default class FilterManager extends WebGLManager
         }
 
         // TODO Cacheing layer..
-        for (const i in uniformData)
-        {
+        for (const i in uniformData) {
             const type = uniformData[i].type;
 
-            if (type === 'sampler2d' && uniforms[i] !== 0)
-            {
-                if (uniforms[i].baseTexture)
-                {
+            if (type === 'sampler2d' && uniforms[i] !== 0) {
+                if (uniforms[i].baseTexture) {
                     shader.uniforms[i] = this.renderer.bindTexture(uniforms[i].baseTexture, textureCount);
-                }
-                else
-                {
+                } else {
                     shader.uniforms[i] = textureCount;
 
                     // TODO
@@ -359,44 +327,29 @@ export default class FilterManager extends WebGLManager
                 }
 
                 textureCount++;
-            }
-            else if (type === 'mat3')
-            {
+            } else if (type === 'mat3') {
                 // check if its PixiJS matrix..
-                if (uniforms[i].a !== undefined)
-                {
+                if (uniforms[i].a !== undefined) {
                     shader.uniforms[i] = uniforms[i].toArray(true);
-                }
-                else
-                {
+                } else {
                     shader.uniforms[i] = uniforms[i];
                 }
-            }
-            else if (type === 'vec2')
-            {
+            } else if (type === 'vec2') {
                 // check if its a point..
-                if (uniforms[i].x !== undefined)
-               {
+                if (uniforms[i].x !== undefined) {
                     const val = shader.uniforms[i] || new Float32Array(2);
 
                     val[0] = uniforms[i].x;
                     val[1] = uniforms[i].y;
                     shader.uniforms[i] = val;
-                }
-                else
-               {
+                } else {
                     shader.uniforms[i] = uniforms[i];
                 }
-            }
-            else if (type === 'float')
-            {
-                if (shader.uniforms.data[i].value !== uniformData[i])
-                {
+            } else if (type === 'float') {
+                if (shader.uniforms.data[i].value !== uniformData[i]) {
                     shader.uniforms[i] = uniforms[i];
                 }
-            }
-            else
-            {
+            } else {
                 shader.uniforms[i] = uniforms[i];
             }
         }
@@ -409,8 +362,7 @@ export default class FilterManager extends WebGLManager
      * @param {number} resolution - The resolution of the target.
      * @return {PIXI.RenderTarget} The new render target
      */
-    getRenderTarget(clear, resolution)
-    {
+    getRenderTarget(clear, resolution) {
         const currentState = this.filterData.stack[this.filterData.index];
         const renderTarget = this.getPotRenderTarget(
             this.renderer.gl,
@@ -429,8 +381,7 @@ export default class FilterManager extends WebGLManager
      *
      * @param {PIXI.RenderTarget} renderTarget - The render target to return.
      */
-    returnRenderTarget(renderTarget)
-    {
+    returnRenderTarget(renderTarget) {
         this.freePotRenderTarget(renderTarget);
     }
 
@@ -443,8 +394,7 @@ export default class FilterManager extends WebGLManager
      * @param {PIXI.Matrix} outputMatrix - the matrix to output to.
      * @return {PIXI.Matrix} The mapped matrix.
      */
-    calculateScreenSpaceMatrix(outputMatrix)
-    {
+    calculateScreenSpaceMatrix(outputMatrix) {
         const currentState = this.filterData.stack[this.filterData.index];
 
         return filterTransforms.calculateScreenSpaceMatrix(
@@ -460,8 +410,7 @@ export default class FilterManager extends WebGLManager
      * @param {PIXI.Matrix} outputMatrix - The matrix to output to.
      * @return {PIXI.Matrix} The mapped matrix.
      */
-    calculateNormalizedScreenSpaceMatrix(outputMatrix)
-    {
+    calculateNormalizedScreenSpaceMatrix(outputMatrix) {
         const currentState = this.filterData.stack[this.filterData.index];
 
         return filterTransforms.calculateNormalizedScreenSpaceMatrix(
@@ -479,8 +428,7 @@ export default class FilterManager extends WebGLManager
      * @param {PIXI.Sprite} sprite - The sprite to map to.
      * @return {PIXI.Matrix} The mapped matrix.
      */
-    calculateSpriteMatrix(outputMatrix, sprite)
-    {
+    calculateSpriteMatrix(outputMatrix, sprite) {
         const currentState = this.filterData.stack[this.filterData.index];
 
         return filterTransforms.calculateSpriteMatrix(
@@ -497,27 +445,21 @@ export default class FilterManager extends WebGLManager
      * @param {boolean} [contextLost=false] context was lost, do not free shaders
      *
      */
-    destroy(contextLost = false)
-    {
+    destroy(contextLost = false) {
         const renderer = this.renderer;
         const filters = this.managedFilters;
 
-        for (let i = 0; i < filters.length; i++)
-        {
-            if (!contextLost)
-            {
+        for (let i = 0; i < filters.length; i++) {
+            if (!contextLost) {
                 filters[i].glShaders[renderer.CONTEXT_UID].destroy();
             }
             delete filters[i].glShaders[renderer.CONTEXT_UID];
         }
 
         this.shaderCache = {};
-        if (!contextLost)
-        {
+        if (!contextLost) {
             this.emptyPool();
-        }
-        else
-        {
+        } else {
             this.pool = {};
         }
     }
@@ -535,24 +477,21 @@ export default class FilterManager extends WebGLManager
      * @param {number} resolution - The resolution of the render target.
      * @return {PIXI.RenderTarget} The new render target.
      */
-    getPotRenderTarget(gl, minWidth, minHeight, resolution)
-    {
+    getPotRenderTarget(gl, minWidth, minHeight, resolution) {
         // TODO you could return a bigger texture if there is not one in the pool?
         minWidth = bitTwiddle.nextPow2(minWidth * resolution);
         minHeight = bitTwiddle.nextPow2(minHeight * resolution);
 
         const key = ((minWidth & 0xFFFF) << 16) | (minHeight & 0xFFFF);
 
-        if (!this.pool[key])
-        {
+        if (!this.pool[key]) {
             this.pool[key] = [];
         }
 
         let renderTarget = this.pool[key].pop();
 
         // creating render target will cause texture to be bound!
-        if (!renderTarget)
-        {
+        if (!renderTarget) {
             // temporary bypass cache..
             const tex = this.renderer.boundTextures[0];
 
@@ -562,7 +501,7 @@ export default class FilterManager extends WebGLManager
             renderTarget = new RenderTarget(gl, minWidth, minHeight, null, 1);
 
             // set the current one back
-            if(tex._glTextures.length > 0) {
+            if (tex._glTextures.length > 0) {
                 gl.bindTexture(gl.TEXTURE_2D, tex._glTextures[this.renderer.CONTEXT_UID].texture);
             } else {
                 gl.bindTexture(gl.TEXTURE_2D, null);
@@ -582,16 +521,12 @@ export default class FilterManager extends WebGLManager
      * Empties the texture pool.
      *
      */
-    emptyPool()
-    {
-        for (const i in this.pool)
-        {
+    emptyPool() {
+        for (const i in this.pool) {
             const textures = this.pool[i];
 
-            if (textures)
-            {
-                for (let j = 0; j < textures.length; j++)
-                {
+            if (textures) {
+                for (let j = 0; j < textures.length; j++) {
                     textures[j].destroy(true);
                 }
             }
@@ -605,12 +540,13 @@ export default class FilterManager extends WebGLManager
      *
      * @param {PIXI.RenderTarget} renderTarget - The renderTarget to free
      */
-    freePotRenderTarget(renderTarget)
-    {
+    freePotRenderTarget(renderTarget) {
         const minWidth = renderTarget.size.width * renderTarget.resolution;
         const minHeight = renderTarget.size.height * renderTarget.resolution;
         const key = ((minWidth & 0xFFFF) << 16) | (minHeight & 0xFFFF);
-
+        if (!this.pool[key]) {
+            this.pool[key] = [];
+        }
         this.pool[key].push(renderTarget);
     }
 }

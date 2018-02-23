@@ -543,7 +543,7 @@ export default class FilterManager extends WebGLManager {
     freePotRenderTarget(renderTarget) {
         const minWidth = renderTarget.size.width * renderTarget.resolution;
         const minHeight = renderTarget.size.height * renderTarget.resolution;
-        const key = ((minWidth & 0xFFFF) << 16) | (minHeight & 0xFFFF);
+        let key = ((minWidth & 0xFFFF) << 16) | (minHeight & 0xFFFF);
 
         if (this.pool[key] === undefined) {
             for (var current in this.pool) {
